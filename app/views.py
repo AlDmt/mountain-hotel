@@ -1,94 +1,56 @@
 import datetime
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import redirect, render,redirect
-from datetime import datetime
-
+from django.shortcuts import redirect, render
 from django.contrib.auth.forms import UserCreationForm
-
 from .forms import  BlogForm, FeedbackForm
 from .forms import AnketaForm
-from .models import Comment # использование модели комментариев
-
 from .forms import CommentForm # использование формы ввода комментария
-
-
+from .models import Comment # использование модели комментариев
+from .models import Blog
 from django.contrib.auth.forms import UserCreationForm
-
 from django.db import models
 
-from .models import Blog
 
 def blog(request):
 
-    posts = Blog.objects.all() # запрос на выбор всех статей блога из модели
+    posts = Blog.objects.all() # ORM
     assert isinstance(request, HttpRequest)
 
-
-
     return render(
-
         request,
-
         'app/blog.html',
-
         {
-
             'title':'Новости',
-
             'posts': posts, # передача списка статей в шаблон веб-страницы
-
             'year':datetime.now().year,
-
         }
-
     )
     
 def blogpost(request, parametr):
-
-
-
     assert isinstance(request, HttpRequest)
-
     post_1 = Blog.objects.get(id=parametr) # запрос на выбор конкретной статьи по параметру
     comments=Comment.objects.filter(post=parametr)
-
-
     if request.method == "POST": # после отправки данных формы на сервер методом POST
-
         form = CommentForm(request.POST)
-
         if form.is_valid():
-
             comment_f = form.save(commit=False)
-
             comment_f.author = request.user # добавляем (так как этого поля нет в форме) в модель Комментария (Comment) в поле автор авторизованного пользователя
-
             comment_f.date = datetime.now() # добавляем в модель Комментария (Comment) текущую дату
-
             comment_f.post = Blog.objects.get(id=parametr) # добавляем в модель Комментария (Comment) статью, для которой данный комментарий
-
             comment_f.save() # сохраняем изменения после добавления полей
-
             return redirect('blogpost', parametr=post_1.id) # переадресация на ту же страницу статьи после отправки комментария
-
     else:
-
         form = CommentForm() # создание формы для ввода комментария
 
 
     return render(
-
         request,
-
         'app/blogpost.html',
-
         {
-
             'post_1': post_1, # передача конкретной статьи в шаблон веб-страницы
             'comments': comments, # передача всех комментариев к данной статье в шаблон веб-страницы
             'form': form, # передача формы добавления комментария в шаблон веб-страницы
             'year':datetime.now().year,
-
         }
 
     )
@@ -129,13 +91,6 @@ def home(request):
     )
     
 
-    
-
-
-
-from django.shortcuts import render, redirect
-from .forms import AnketaForm
-
 def anketa_view(request):
     assert isinstance(request, HttpRequest)
 
@@ -167,7 +122,6 @@ def anketa_view(request):
 
 def layout_view(request):
     return render(request, 'app/layout.html', {})
-
 def index(request):
     return render(request, 'app/index.html')
 def rooms(request):
@@ -178,7 +132,6 @@ def contacts(request):
     return render(request, 'app/contacts.html')
 def feedback(request):
     return render(request, 'app/feedback.html')
-
 def about(request):
     return render(request, 'app/about.html')
 def add(request):
@@ -193,8 +146,6 @@ def parking(request):
     return render(request, 'app/parking.html')
 def standart(request):
     return render(request, 'app/rooms/standart.html')
-
-
 def feedback(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
@@ -207,8 +158,6 @@ def feedback(request):
     else:
         form = FeedbackForm()
     return render(request, 'app/feedback.html', {'form': form})
-
-
 def newpost(request):
     assert isinstance(request,HttpRequest)
     if request.method=="POST":
@@ -218,11 +167,9 @@ def newpost(request):
             blog_f.posted=datetime.now()
             blog_f.autor=request.user
             blog_f.save()
-            
             return redirect('blog')
     else:
         blogform=BlogForm()
-            
     return render(
             request,
             'app/newpost.html',

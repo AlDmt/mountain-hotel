@@ -6,8 +6,6 @@ from django.urls import reverse
 from datetime import datetime
 from django.contrib.auth.models import User
 
-
-
 class Blog(models.Model):
 
     title = models.CharField(max_length = 100, unique_for_date = "posted", verbose_name = "Заголовок")
@@ -22,25 +20,16 @@ class Blog(models.Model):
     # Методы класса:
 
     def get_absolute_url(self): # метод возвращает строку с URL-адресом записи
-
         return reverse("blogpost", args=[str(self.id)])
-
         def __str__(self): # метод возвращает название, используемое для представления отдельных записей в административном разделе
-
             return self.title
 
 # Метаданные – вложенный класс, который задает дополнительные параметры модели:
-
     class Meta:
-
         db_table = "Posts" # имя таблицы для модели
-
         ordering = ["-posted"] # порядок сортировки данных в модели ("-" означает по убыванию)
-
         verbose_name = "статья блога" # имя, под которым модель будет отображаться в административном разделе (для одной статьи блога)
-
         verbose_name_plural = "статьи блога" # тоже для всех статей блога
-
 admin.site.register(Blog)
 
 class Feedback(models.Model):
