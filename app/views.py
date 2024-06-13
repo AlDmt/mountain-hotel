@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.forms import UserCreationForm
@@ -176,7 +176,7 @@ def newpost(request):
             {
                 'blogform': blogform,
                 'title': 'Добавить статью блога',
-                'year':datetime.now().year,
+                'year':datetime.utcnow().year,
             }
         )
             
