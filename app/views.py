@@ -13,7 +13,9 @@ from django.db import models
 
 def blog(request):
 
-    posts = Blog.objects.all() # ORM
+    # posts = Blog.objects.all() # ORM
+    
+    posts=Blog.objects.raw("SELECT * FROM Posts") #Выбор всех постов с использованием SQL
     assert isinstance(request, HttpRequest)
 
     return render(
@@ -28,8 +30,16 @@ def blog(request):
     
 def blogpost(request, parametr):
     assert isinstance(request, HttpRequest)
-    post_1 = Blog.objects.get(id=parametr) # запрос на выбор конкретной статьи по параметру
-    comments=Comment.objects.filter(post=parametr)
+    #post_1 = Blog.objects.get(id=parametr) # запрос на выбор конкретной статьи по параметру
+    post_1 = Blog.objects.raw("SELECT * FROM Posts WHERE id = %s", [parametr])
+    
+    # Проверяем, что пост существует
+    if not post_1:
+        post_1 = None
+    else:
+        post_1 = post_1[0]  # Получаем первый (и единственный) результат
+    
+    comments = Comment.objects.filter(post=parametr)
     if request.method == "POST": # после отправки данных формы на сервер методом POST
         form = CommentForm(request.POST)
         if form.is_valid():
