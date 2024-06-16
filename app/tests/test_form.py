@@ -23,14 +23,14 @@ class FeedbackFormTest(TestCase):
 class AnketaFormTest(TestCase):
     def test_anketa_form_valid(self):
         form = AnketaForm(data={
-            'second_name': "Ivanov",
-            'first_name': "Ivan",
+            'second_name': "Дмитриев",
+            'first_name': "Алексей",
             'reservation': '5',
-            'city': "Moscow",
-            'job': "Engineer",
+            'city': "Псков",
+            'job': "Студент",
             'work': '5',
             'back': '1',
-            'email': "ivanov@example.com",
+            'email': "aleksej.75144@hotmail.com",
             'message': "Test feedback",
             'notice': True
         })

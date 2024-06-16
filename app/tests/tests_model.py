@@ -19,20 +19,17 @@ class BlogModelTest(TestCase):
             image="test.jpg"
         )
 
-    # def test_blog_creation(self):
-    #     self.assertTrue(isinstance(self.blog, Blog))
-    #     self.assertEqual(self.blog.__str__(), self.blog.title)
-    #     self.assertEqual(self.blog.get_absolute_url(), f"/blogpost/{self.blog.id}/")
+    
 
     def test_blog_meta(self):
         self.assertEqual(self.blog._meta.db_table, "Posts")
-        self.assertEqual(self.blog._meta.verbose_name, "Статья блога тут")
+        self.assertEqual(self.blog._meta.verbose_name, "статья блога")
         self.assertEqual(self.blog._meta.verbose_name_plural, "статьи блога")
 
 class FeedbackModelTest(TestCase):
     def setUp(self):
         self.feedback = Feedback.objects.create(
-            name="Testing_User,
+            name="Testing_User",
             email="aleksej.75144@hotmail.com",
             message="Тут пишу тестовое сообщение",
             agree_to_news=True
@@ -48,7 +45,7 @@ class AnketaModelTest(TestCase):
             second_name="Дмитриев",
             first_name="Алексей",
             reservation='5',
-            city="Псков,
+            city="Псков",
             job="Студент",
             work='5',
             back='1',
@@ -69,7 +66,7 @@ class CommentModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="commentuser", password="12345")
         self.blog = Blog.objects.create(
-            title="Комментарий для статьи блога,
+            title="Комментарий для статьи блога",
             description="Сокращенный текст",
             content="Весь текст комментария тут",
             posted=datetime.now(),

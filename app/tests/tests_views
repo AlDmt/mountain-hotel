@@ -1,0 +1,76 @@
+class BlogViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.blog = Blog.objects.create(
+             title="Тестовый заголовок",
+            description="краткий текст поста",
+            content="тут текст всего поста, текст текст тут текст",
+            posted=datetime.now(),
+            author=self.user,
+            image="test.jpg"
+        )
+
+    def test_blog_list_view(self):
+        response = self.client.get(reverse('blog'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Blog")
+        self.assertTemplateUsed(response, 'app/blog.html')
+
+    def test_blog_detail_view(self):
+        response = self.client.get(reverse('blogpost', args=[self.blog.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Full content")
+        self.assertTemplateUsed(response, 'app/blogpost.html')
+
+
+
+class BlogPostViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.blog = Blog.objects.create(
+            title="Тестовый заголовок",
+            description="краткий текст поста",
+            content="тут текст всего поста, текст текст тут текст",
+            posted=datetime.now(),
+            author=self.user,
+            image="test.jpg"
+        )
+
+    def test_blogpost_view_get(self):
+        response = self.client.get(reverse('blogpost', args=[self.blog.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/blogpost.html')
+
+    def test_blogpost_view_post(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('blogpost', args=[self.blog.id]), {
+            'text': 'Test comment'
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after comment
+
+class AnketaViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_anketa_view_get(self):
+        response = self.client.get(reverse('anketa_view'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/templates/app/anketa.html')
+
+    def test_anketa_view_post(self):
+        response = self.client.post(reverse('anketa_view'), {
+            'second_name': "Ivanov",
+            'first_name': "Ivan",
+            'reservation': '5',
+            'city': "Moscow",
+            'job': "Engineer",
+            'work': '5',
+            'back': '1',
+            'email': "ivanov@example.com",
+            'message': "Test feedback",
+            'notice': True
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Ivanov")
