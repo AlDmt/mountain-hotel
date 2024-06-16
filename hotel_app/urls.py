@@ -41,7 +41,6 @@ urlpatterns = [
     path('anketa/',views.anketa_view, name='anketa'),
     path('registration/', views.registration, name='registration'),
     path('about/', views.about, name='about'),
-   path('accounts/', include('django.contrib.auth.urls')),
     path('booking/', views.booking, name='booking'),
     path('blog/', views.blog, name='blog'),
     path('blogpost/<int:parametr>/', views.blogpost, name='blogpost'),
@@ -59,7 +58,8 @@ urlpatterns = [
             {
                 'title':'Войти',
                 'year':datetime.now().year,
-            }
+            },
+            next_page='/'
         ),
         name='login'),
     path('logout/',LogoutView.as_view(next_page='/'), name='logout'),
