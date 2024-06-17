@@ -46,7 +46,7 @@ def edit_post(request, post_id):
                 image = post.image.name  # или post.image, в зависимости от структуры модели
             
 
-            # Выполняем SQL запрос для обновления данных
+            # Обовление данных с использованием SQL-запроса
             with connection.cursor() as cursor:
                 cursor.execute(""" UPDATE Posts SET title = %s, content = %s, image = %s WHERE id = %s """, [title, content, image, post_id])
 
@@ -64,9 +64,11 @@ def edit_post(request, post_id):
 def delete_post(request, post_id):
     post = get_object_or_404(Blog, id=post_id, author=request.user)
     if request.method == "POST":
-        post.delete()
-        return redirect('blog')
-    return render(request, 'app/delete_post.html', {'post': post})
+       post.delete()   # Удаление постаа с использованием ORM
+       # Выполнение SQL запроса для удаления данных
+        # with connection.cursor() as cursor:
+        #     cursor.execute("DELETE FROM Posts WHERE id = %s", [post_id])
+    return redirect('blog')
 
 def blogpost(request, parametr):
     assert isinstance(request, HttpRequest)
@@ -213,10 +215,22 @@ def newpost(request):
     if request.method=="POST":
         blogform=BlogForm(request.POST,request.FILES)
         if blogform.is_valid():
-            blog_f=blogform.save(commit=False)
-            blog_f.posted=datetime.now()
-            blog_f.author=request.user
-            blog_f.save()
+            # blog_f=blogform.save(commit=False)
+            # blog_f.posted=datetime.now()
+            # blog_f.author=request.user
+            # blog_f.save()
+            # newblog=Blog.objects.create( #ORM
+            #     title=blogform.cleaned_data['title'],
+            #     content=blogform.cleaned_data['content'],
+            #     image=blogform.cleaned_data['image'],
+            #     posted=datetime.now(),
+            #     author=request.user,)
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO Posts (title, description, content, image, posted, author_id) VALUES (%s, %s, %s, %s, %s, %s)", 
+                [blogform.cleaned_data['title'], blogform.cleaned_data['description'], blogform.cleaned_data['content'], blogform.cleaned_data['image'], 
+                datetime.now(), request.user.id])
+                newblog=Blog.objects.get(title=blogform.cleaned_data['title'])
+                return redirect('blog')
             return redirect('blog')
     else:
         blogform=BlogForm()
