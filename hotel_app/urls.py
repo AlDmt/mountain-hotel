@@ -29,6 +29,7 @@ from app import forms
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
    
@@ -65,7 +66,8 @@ urlpatterns = [
             next_page='/'
         ),
         name='login'),
-    path('logout/',LogoutView.as_view(next_page='/'), name='logout'),
+    #path('logout/',LogoutView.as_view(next_page='/'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
     path('admin/', admin.site.urls),
 ]
 
