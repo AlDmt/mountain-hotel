@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from .forms import  BlogForm, FeedbackForm
 from .forms import AnketaForm
@@ -175,7 +175,7 @@ def newpost(request):
         if blogform.is_valid():
             blog_f=blogform.save(commit=False)
             blog_f.posted=datetime.now()
-            blog_f.autor=request.user
+            blog_f.author=request.user
             blog_f.save()
             return redirect('blog')
     else:
@@ -189,4 +189,29 @@ def newpost(request):
                 'year':datetime.utcnow().year,
             }
         )
+
+
+def edit_post(request, post_id):
+    post = get_object_or_404(Blog, id=post_id)
+    if request.method == 'POST':
+        form = BlogForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('blogpost', parametr=post_id)  # Перенаправление на страницу поста после редактирования
+    else:
+        form = BlogForm(instance=post)
+    
+    return render(request, 'app/edit_post.html', {
+        'form': form,
+        'post': post
+    })
+
+
+def delete_post(request, post_id):
+    post = get_object_or_404(Blog, id=post_id, author=request.user)
+    if request.method == "POST":
+        post.delete()
+        return redirect('blog')
+    return render(request, 'app/delete_post.html', {'post': post})
+
             

@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django import forms, views
 from app import views
+from app.views import edit_post, delete_post
 
 from django.contrib import admin
 from django.urls import include, path
@@ -44,6 +45,8 @@ urlpatterns = [
     path('booking/', views.booking, name='booking'),
     path('blog/', views.blog, name='blog'),
     path('blogpost/<int:parametr>/', views.blogpost, name='blogpost'),
+    path('edit_post/<int:post_id>/', edit_post, name='edit_post'), #Редактирвоание поста
+    path('delete_post/<int:post_id>/', delete_post, name='delete_post'), # Удаление поста
     path('newpost/', views.newpost, name='newpost'),
     path('videopost/', views.videopost, name='videopost'),
     path('kino/', views.kino, name='kino'),
